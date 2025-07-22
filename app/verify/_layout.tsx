@@ -9,13 +9,13 @@ export default function TabLayout() {
   const router = useRouter();
   return (
     <SafeAreaView className="flex-1 bg-background">
-      <View className="flex-1 bg-background pt-10">
+      <View className="flex-1 bg-background">
         <View className="flex-row items-center px-6 mb-4"></View>
         <View className="flex-row items-center px-6 mb-6">
           <View className="flex-1">
             <TouchableOpacity
               className="w-8 h-8 justify-center items-center"
-              onPress={() => router.back()}
+              onPress={() => router.replace("/")}
             >
               <Feather name="x" size={24} color="white" />
             </TouchableOpacity>

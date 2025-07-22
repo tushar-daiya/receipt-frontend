@@ -6,6 +6,7 @@ import {
   CameraView,
   useCameraPermissions,
 } from "expo-camera";
+import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
 import {
@@ -15,7 +16,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 
 export default function Step4() {
@@ -26,15 +27,20 @@ export default function Step4() {
   const { formData, resetForm } = useReceiptStore();
   const [submitting, setSubmitting] = useState(false);
   const [facing, setFacing] = useState<CameraType>("back");
-  const [image, setImage] = useState<CameraCapturedPicture | null>(null);
+  const [image, setImage] = useState<
+    CameraCapturedPicture | ImagePicker.ImagePickerAsset | null
+  >(null);
   const [permission, requestPermission] = useCameraPermissions();
   const ref = useRef<CameraView | null>(null);
-  if (!permission) {
+
+  const isCamera = formData.imageUploadMethod === "camera";
+
+  if (isCamera && !permission) {
     // Camera permissions are still loading.
     return <View />;
   }
 
-  if (!permission.granted) {
+  if (isCamera && permission && !permission.granted) {
     // Camera permissions are not granted yet.
     return (
       <View className="flex-1 items-center justify-center bg-background">
@@ -57,6 +63,25 @@ export default function Step4() {
       const photo = await cameraReady.takePictureAsync();
       console.log(photo);
       setImage(photo);
+    }
+  }
+
+  async function pickImage() {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [9, 16],
+        quality: 1,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        console.log(result.assets[0]);
+        setImage(result.assets[0]);
+      }
+    } catch (error) {
+      Alert.alert("Error", "Failed to pick image. Please try again.");
+      console.error("Image picker error:", error);
     }
   }
   async function handleSubmit() {
@@ -82,11 +107,16 @@ export default function Step4() {
       }
       const blobResponse = await fetch(image.uri);
       const blob = await blobResponse.blob();
+
+      // Determine content type based on image source
+      const contentType =
+        "format" in image ? image.format : image.mimeType || "image/jpeg";
+
       const res = await fetch(url, {
         method: "PUT",
         body: blob,
         headers: {
-          "Content-Type": image.format,
+          "Content-Type": contentType,
         },
       });
       if (!res.ok) {
@@ -141,18 +171,22 @@ export default function Step4() {
               onPress={() => setImage(null)}
               className={`${submitting ? "bg-primaryMuted" : "bg-primary"} rounded-full py-3 flex-row justify-center items-center`}
             >
-              <Text className="text-black font-semibold">Take new Image</Text>
+              <Text className="text-black font-semibold">
+                {isCamera ? "Take new Image" : "Choose new Image"}
+              </Text>
             </Pressable>
             <Pressable
               disabled={submitting}
               onPress={handleSubmit}
               className={`${submitting ? "bg-primaryMuted" : "bg-primary"} rounded-full py-3 flex-row mt-4 justify-center items-center`}
             >
-              <Text className="text-black font-semibold">{submitting ? "Submitting..." : "Submit"}</Text>
+              <Text className="text-black font-semibold">
+                {submitting ? "Submitting..." : "Submit"}
+              </Text>
             </Pressable>
           </View>
         </>
-      ) : (
+      ) : isCamera ? (
         <View className="h-[80%] w-auto aspect-[9/16] mx-auto">
           <CameraView ref={ref} style={styles.camera} facing={facing}>
             <View style={styles.buttonContainer}>
@@ -162,11 +196,24 @@ export default function Step4() {
             </View>
           </CameraView>
         </View>
+      ) : (
+        <View className="h-[80%] w-auto aspect-[9/16] mx-auto">
+          <View className="flex-1 bg-black rounded-lg items-center justify-center">
+            <Text className="text-white text-lg mb-4">No image selected</Text>
+          </View>
+          <View className="mt-auto mb-6">
+            <Pressable
+              onPress={pickImage}
+              className="bg-primary rounded-full py-3 flex-row justify-center items-center"
+            >
+              <Text className="text-black font-semibold">Choose Image</Text>
+            </Pressable>
+          </View>
+        </View>
       )}
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
