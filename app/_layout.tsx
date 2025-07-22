@@ -6,11 +6,12 @@ import { useEffect } from "react";
 import { ActivityIndicator, Pressable, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "./globals.css";
+import { useSigninStore } from "@/lib/sign-in-store";
 const queryClient = new QueryClient();
 export default function RootLayout() {
   const { data, error, isPending, refetch } = authClient.useSession();
-  const { session, user, setSession, setUser, isFirstTime } = authStore();
-
+  const { session, setSession, setUser } = authStore();
+  const { email } = useSigninStore();
   // Update Zustand store when session data changes
   useEffect(() => {
     if (data) {
@@ -61,6 +62,10 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Protected guard={!!!session}>
             <Stack.Screen name="initial" />
+            <Stack.Screen name="signin" />
+            <Stack.Protected guard={!!email}>
+              <Stack.Screen name="otpVerification" />
+            </Stack.Protected>
             <Stack.Screen name="login" />
             <Stack.Screen name="signup" />
           </Stack.Protected>

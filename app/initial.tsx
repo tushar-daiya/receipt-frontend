@@ -29,7 +29,7 @@ const initialScreen = () => {
         image={images.initial_3}
       />
       <Pressable
-        onPress={() => router.push("/login")}
+        onPress={() => router.push("/signin")}
         className="bg-primary rounded-lg px-6 py-3 mt-5"
       >
         <Text className="text-black font-semibold text-center">
