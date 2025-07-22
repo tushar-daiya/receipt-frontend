@@ -17,6 +17,7 @@ const Page = () => {
     id: id as string,
   });
 
+  console.log(data, error, isPending, isError);
   const receipt: Receipt = data?.receipt;
 
   return (
