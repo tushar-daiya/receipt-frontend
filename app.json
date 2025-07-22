@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "test",
-    "slug": "test",
+    "name": "receipt",
+    "slug": "receipt",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "test",
+    "scheme": "receipt",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -16,7 +16,8 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.receipt"
     },
     "web": {
       "bundler": "metro",

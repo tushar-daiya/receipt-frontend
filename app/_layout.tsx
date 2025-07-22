@@ -1,29 +1,74 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/useColorScheme';
-
+import { authClient } from "@/lib/auth-client";
+import { authStore } from "@/lib/auth-store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Stack } from "expo-router";
+import { useEffect } from "react";
+import { ActivityIndicator, Pressable, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import "./globals.css";
+const queryClient = new QueryClient();
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
+  const { data, error, isPending, refetch } = authClient.useSession();
+  const { session, user, setSession, setUser } = authStore();
 
-  if (!loaded) {
-    // Async font loading only occurs in development.
-    return null;
+  // Update Zustand store when session data changes
+  useEffect(() => {
+    if (data) {
+      setSession(data.session);
+      setUser(data.user);
+    } else {
+      setSession(null);
+      setUser(null);
+    }
+  }, [data, setSession, setUser]);
+
+  if (isPending) {
+    return (
+      <SafeAreaView className="flex-1 bg-background justify-center items-center">
+        <ActivityIndicator size="large" color="white" />
+      </SafeAreaView>
+    );
+  }
+
+  if (error) {
+    return (
+      <SafeAreaView className="flex-1 bg-background justify-center items-center">
+        <Text className="text-white text-lg mb-4">Something went wrong</Text>
+        <Text className="text-gray-400 text-center mb-6 px-4">
+          Unable to load your session. Please try again.
+        </Text>
+
+        <Pressable
+          onPress={() => authClient.signOut()}
+          className="bg-primary rounded-lg px-6 py-3 mb-3"
+        >
+          <Text className="text-black font-semibold">Sign Out & Re-login</Text>
+        </Pressable>
+
+        <Pressable
+          onPress={() => refetch()}
+          className="bg-secondary rounded-lg px-6 py-3"
+        >
+          <Text className="text-white font-semibold">Retry</Text>
+        </Pressable>
+      </SafeAreaView>
+    );
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
+    <QueryClientProvider client={queryClient}>
+      {/* <SafeAreaView className="flex-1 dark:bg-background bg-white"> */}
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={!!!session}>
+          <Stack.Screen name="login" />
+          <Stack.Screen name="signup" />
+        </Stack.Protected>
+        <Stack.Protected guard={!!session}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="verify" />
+        </Stack.Protected>
       </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+      {/* </SafeAreaView> */}
+    </QueryClientProvider>
   );
 }

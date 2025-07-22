@@ -1,0 +1,1 @@
+export const BACKEND_API_URL = "http://192.168.29.225:4000/api";
