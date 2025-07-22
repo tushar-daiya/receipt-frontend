@@ -1,8 +1,9 @@
 import { Feather } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 // import { Home, Plus, CreditCard, User } from "lucide-react-native";
 
 export default function TabLayout() {
+  const router = useRouter();
   return (
     <Tabs
       screenOptions={{
@@ -42,6 +43,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Feather name="plus" color={color} size={size || 24} />
           ),
+        }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/verify");
+          },
         }}
       />
 
