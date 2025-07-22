@@ -1,5 +1,8 @@
+import { authClient } from "@/lib/auth-client";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link } from "expo-router";
 import React from "react";
-import { z } from "zod";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Pressable,
@@ -7,10 +10,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { Link } from "expo-router";
-import { authClient } from "@/lib/auth-client";
+import { z } from "zod";
 const loginSchema = z.object({
   email: z.email("Invalid email address"),
   password: z

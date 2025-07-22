@@ -1,4 +1,4 @@
-package com.anonymous.test
+package com.anonymous.receipt
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build

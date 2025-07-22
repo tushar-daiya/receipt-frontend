@@ -1,4 +1,4 @@
-package com.anonymous.test
+package com.anonymous.receipt
 
 import android.app.Application
 import android.content.res.Configuration

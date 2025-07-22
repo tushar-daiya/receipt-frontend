@@ -9,7 +9,7 @@ import "./globals.css";
 const queryClient = new QueryClient();
 export default function RootLayout() {
   const { data, error, isPending, refetch } = authClient.useSession();
-  const { session, user, setSession, setUser } = authStore();
+  const { session, user, setSession, setUser, isFirstTime } = authStore();
 
   // Update Zustand store when session data changes
   useEffect(() => {
@@ -57,18 +57,19 @@ export default function RootLayout() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* <SafeAreaView className="flex-1 dark:bg-background bg-white"> */}
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Protected guard={!!!session}>
-          <Stack.Screen name="login" />
-          <Stack.Screen name="signup" />
-        </Stack.Protected>
-        <Stack.Protected guard={!!session}>
-          <Stack.Screen name="(tabs)" />
-          <Stack.Screen name="verify" />
-        </Stack.Protected>
-      </Stack>
-      {/* </SafeAreaView> */}
+      <SafeAreaView className="flex-1 dark:bg-background bg-white">
+        <Stack screenOptions={{ headerShown: false }}>
+          <Stack.Protected guard={!!!session}>
+            <Stack.Screen name="initial" />
+            <Stack.Screen name="login" />
+            <Stack.Screen name="signup" />
+          </Stack.Protected>
+          <Stack.Protected guard={!!session}>
+            <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="verify" />
+          </Stack.Protected>
+        </Stack>
+      </SafeAreaView>
     </QueryClientProvider>
   );
 }

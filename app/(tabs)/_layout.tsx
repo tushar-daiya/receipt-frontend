@@ -1,6 +1,5 @@
-import images from "@/constants/images";
+import { Feather } from "@expo/vector-icons";
 import { Tabs } from "expo-router";
-import { Image } from "react-native";
 // import { Home, Plus, CreditCard, User } from "lucide-react-native";
 
 export default function TabLayout() {
@@ -30,41 +29,38 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <Image source={images.home_icon} className="w-6 h-6" />
-            // <Home color={color} size={size || 24} />
+          tabBarIcon: ({ color, size, focused }) => (
+            <Feather name="home" color={color} size={size || 24} />
           ),
         }}
       />
 
-      {/* <Tabs.Screen
+      <Tabs.Screen
         name="add"
         options={{
           title: "Add",
           tabBarIcon: ({ color, size }) => (
-            <Plus color={color} size={size || 24} />
-          ),
-        }}
-      /> */}
-
-      <Tabs.Screen
-        name="wallet"
-        options={{
-          title: "Wallet",
-          tabBarIcon: ({ color, size }) => (
-            <Image source={images.home_icon} className="w-6 h-6" />
-            // <CreditCard color={color} size={size || 24} />
+            <Feather name="plus" color={color} size={size || 24} />
           ),
         }}
       />
 
       <Tabs.Screen
-        name="profile"
+        name="cards"
         options={{
-          title: "Profile",
+          title: "Cards",
           tabBarIcon: ({ color, size }) => (
-            <Image source={images.home_icon} className="w-6 h-6" />
-            // <User color={color} size={size || 24} />
+            <Feather name="credit-card" color={color} size={size || 24} />
+          ),
+        }}
+      />
+
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Feather name="user" color={color} size={size || 24} />
           ),
           animation: "fade",
         }}

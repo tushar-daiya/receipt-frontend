@@ -1,11 +1,11 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import React, { useState } from "react";
-import z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
-import { Controller, useForm } from "react-hook-form";
-import DatePicker from "react-native-date-picker";
-import { useRouter } from "expo-router";
 import { useReceiptStore } from "@/lib/verify-store";
+import { zodResolver } from "@hookform/resolvers/zod/dist/zod.js";
+import DatePicker from "@react-native-community/datetimepicker";
+import { useRouter } from "expo-router";
+import React, { useState } from "react";
+import { Controller, useForm } from "react-hook-form";
+import { Pressable, Text, TextInput, View } from "react-native";
+import z from "zod";
 
 const formSchema = z.object({
   amount: z
@@ -22,6 +22,7 @@ const formSchema = z.object({
 const Index = () => {
   const router = useRouter();
   const { formData, updateFormData, setCurrentStep } = useReceiptStore();
+  const [open, setOpen] = useState(false);
   const {
     control,
     handleSubmit,
@@ -31,7 +32,7 @@ const Index = () => {
     defaultValues: {
       amount: formData.amount,
       vendor: formData.vendor,
-      // date: new Date(),
+      date: undefined,
       category: formData.category,
     },
   });
@@ -122,7 +123,18 @@ const Index = () => {
           )}
         </View>
 
-        {/* <View className="mt-8">
+        {/* <DatePicker
+          testID="dateTimePicker"
+          value={formData.date || new Date()}
+          mode={"date"}
+          is24Hour={true}
+          onChange={(_, date) => {
+            if (date) {
+              updateFormData({ ...formData, date });
+            }
+          }}
+        /> */}
+        <View className="mt-8">
           <Text className="text-primaryMuted mb-2">Date</Text>
           <Controller
             control={control}
@@ -133,30 +145,29 @@ const Index = () => {
                   onPress={() => setOpen(true)}
                   className="bg-secondary rounded-lg px-4 py-2 h-16 justify-center"
                 >
-                  <Text className="text-white">
-                    {value ? value.toLocaleDateString() : "Select Date"}
+                  <Text className="text-primaryMuted">
+                    {value ? value.toLocaleDateString() : "Date"}
                   </Text>
                 </Pressable>
-                <DatePicker
-                  modal
-                  open={open}
-                  date={value || new Date()}
-                  onConfirm={(date) => {
-                    console.log(date);
-                    setOpen(false);
-                    onChange(date);
-                  }}
-                  onCancel={() => {
-                    setOpen(false);
-                  }}
-                />
+                {open && (
+                  <DatePicker
+                    value={value || new Date()}
+                    mode="date"
+                    onChange={(event, selectedDate) => {
+                      setOpen(false);
+                      if (selectedDate) {
+                        onChange(selectedDate);
+                      }
+                    }}
+                  />
+                )}
               </>
             )}
           />
           {errors.date && (
             <Text className="text-red-500">{errors.date.message}</Text>
           )}
-        </View> */}
+        </View>
       </View>
 
       <View className="mt-auto mb-6">

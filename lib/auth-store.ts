@@ -1,8 +1,10 @@
 import { Session, User } from "better-auth/types";
+import { deleteItemAsync, getItem, setItem } from "expo-secure-store";
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { getItem, setItem, deleteItemAsync } from "expo-secure-store";
+import { createJSONStorage, persist } from "zustand/middleware";
 type AuthStore = {
+  isFirstTime: boolean;
+  setIsFirstTime: (isFirstTime: boolean) => void;
   session: Session | null;
   setSession: (session: Session | null) => void;
   user: User | null;
@@ -12,6 +14,8 @@ type AuthStore = {
 export const authStore = create(
   persist<AuthStore>(
     (set) => ({
+      isFirstTime: true,
+      setIsFirstTime: (isFirstTime) => set({ isFirstTime }),
       session: null,
       setSession: (session) => set({ session }),
       user: null,
