@@ -14,7 +14,6 @@
         "NSCameraUsageDescription": "$(PRODUCT_NAME) needs access to your Camera.",
         "NSMicrophoneUsageDescription": "$(PRODUCT_NAME) needs access to your Microphone.",
         "NSPhotoLibraryUsageDescription": "$(PRODUCT_NAME) needs access to your Photo Library to save downloaded files.",
-        "NSPhotoLibraryAddUsageDescription": "$(PRODUCT_NAME) needs access to save images to your Photo Library.",
         "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.anonymous.receipt"
@@ -28,9 +27,7 @@
       "package": "com.anonymous.receipt",
       "permissions": [
         "android.permission.CAMERA",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.READ_EXTERNAL_STORAGE",
-        "android.permission.WRITE_EXTERNAL_STORAGE"
+        "android.permission.RECORD_AUDIO"
       ]
     },
     "web": {
@@ -40,9 +37,6 @@
     },
     "plugins": [
       "expo-router",
-      "expo-file-system",
-      "expo-sharing", 
-      "expo-media-library",
       [
         "expo-splash-screen",
         {
