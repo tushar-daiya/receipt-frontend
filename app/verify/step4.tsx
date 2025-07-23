@@ -61,7 +61,6 @@ export default function Step4() {
     const cameraReady = ref.current;
     if (cameraReady) {
       const photo = await cameraReady.takePictureAsync();
-      console.log(photo);
       setImage(photo);
     }
   }
@@ -76,7 +75,6 @@ export default function Step4() {
       });
 
       if (!result.canceled && result.assets[0]) {
-        console.log(result.assets[0]);
         setImage(result.assets[0]);
       }
     } catch (error) {

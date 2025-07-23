@@ -1,1 +1,1 @@
-export const BACKEND_API_URL = "https://receipt-backend-hqjf.onrender.com/api";
+export const BACKEND_API_URL = "http://192.168.29.225:4000/api";

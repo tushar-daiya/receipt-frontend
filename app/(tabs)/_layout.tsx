@@ -60,6 +60,12 @@ export default function TabLayout() {
             <Feather name="credit-card" color={color} size={size || 24} />
           ),
         }}
+        listeners={{
+          tabPress: (e) => {
+            e.preventDefault();
+            router.push("/wallet");
+          },
+        }}
       />
 
       <Tabs.Screen

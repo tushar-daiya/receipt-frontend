@@ -21,7 +21,6 @@ const Share = () => {
     id: id as string,
   });
 
-  console.log(data, error, isPending, isError, isSuccess);
 
   const receipt: Receipt = data?.receipt;
   return (

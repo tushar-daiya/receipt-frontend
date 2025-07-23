@@ -4,7 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { emailOTPClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  baseURL: "https://receipt-backend-hqjf.onrender.com", // Base URL of your Better Auth backend.
+  baseURL: "http://192.168.29.225:4000", // Base URL of your Better Auth backend.
   plugins: [
     expoClient({
       scheme: "receipt",
