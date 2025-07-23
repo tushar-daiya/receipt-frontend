@@ -34,18 +34,16 @@ const login = () => {
   const [error, setError] = React.useState<string | null>(null);
 
   async function onSubmit(values: z.infer<typeof loginSchema>) {
-    // const { data, error } = await authClient.signIn.email({
-    //   email: values.email,
-    //   password: values.password,
-    // });
-    // if (error) {
-    //   console.error("Login error:", error);
-    //   setError(error.message || "An error occurred during login");
-    //   return;
-    // }
-    setEmail(values.email);
-    setError(null);
-    router.push("/otpVerification");
+    const { data, error } = await authClient.signIn.email({
+      email: values.email,
+      password: values.password,
+    });
+    if (error) {
+      console.error("Login error:", error);
+      setError(error.message || "An error occurred during login");
+      return;
+    }
+    router.push("/");
   }
   return (
     <View className="flex-1 justify-center px-10 bg-background">

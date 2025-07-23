@@ -31,7 +31,7 @@ const OtpVerification = () => {
     }
     setError(null);
     try {
-      const { data, error } = await authClient.signIn.emailOtp({
+      const { data, error } = await authClient.emailOtp.verifyEmail({
         email: email,
         otp: values.otp,
       });

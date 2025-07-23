@@ -1,19 +1,26 @@
 import { authClient } from "@/lib/auth-client";
 import { authStore } from "@/lib/auth-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, usePathname } from "expo-router";
 import { useEffect } from "react";
 import { ActivityIndicator, Pressable, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import "./globals.css";
 import { useSigninStore } from "@/lib/sign-in-store";
+
 const queryClient = new QueryClient();
+
 export default function RootLayout() {
+  const pathname = usePathname();
   const { data, error, isPending, refetch } = authClient.useSession();
   const { session, setSession, setUser } = authStore();
   const { email } = useSigninStore();
+
   // Update Zustand store when session data changes
   useEffect(() => {
+    if (pathname === "/otpVerification") {
+      return;
+    }
     if (data) {
       setSession(data.session);
       setUser(data.user);
@@ -22,6 +29,8 @@ export default function RootLayout() {
       setUser(null);
     }
   }, [data, setSession, setUser]);
+
+  console.log("Session Data:", data);
 
   if (isPending) {
     return (
@@ -60,15 +69,20 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaView className="flex-1 dark:bg-background bg-white">
         <Stack screenOptions={{ headerShown: false }}>
+          {/* Unauthenticated routes - accessible when NO session */}
           <Stack.Protected guard={!!!session}>
-            <Stack.Screen name="initial" />
-            <Stack.Screen name="signin" />
             <Stack.Protected guard={!!email}>
               <Stack.Screen name="otpVerification" />
             </Stack.Protected>
-            <Stack.Screen name="login" />
+            <Stack.Screen name="initial" />
             <Stack.Screen name="signup" />
+            <Stack.Screen name="login" />
+            <Stack.Screen name="signin" />
+
+            {/* OTP Verification - accessible when no session BUT email is set */}
           </Stack.Protected>
+
+          {/* Authenticated routes - accessible when session exists */}
           <Stack.Protected guard={!!session}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="verify" />

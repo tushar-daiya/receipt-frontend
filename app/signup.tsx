@@ -9,8 +9,9 @@ import {
 } from "react-native";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { Link } from "expo-router";
+import { Link, router } from "expo-router";
 import { authClient } from "@/lib/auth-client";
+import { useSigninStore } from "@/lib/sign-in-store";
 const signupSchema = z.object({
   fullName: z.string("Full name is required").min(1, "Full name is required"),
   email: z.email("Invalid email address"),
@@ -27,6 +28,7 @@ const signup = () => {
   } = useForm({
     resolver: zodResolver(signupSchema),
   });
+  const { setEmail } = useSigninStore();
   const [error, setError] = React.useState<string | null>(null);
   async function onSubmit(values: z.infer<typeof signupSchema>) {
     const { data, error } = await authClient.signUp.email({
@@ -39,6 +41,9 @@ const signup = () => {
       setError(error.message || "An error occurred during signup");
       return;
     }
+    setEmail(values.email);
+    setError(null);
+    router.push("/otpVerification");
   }
   return (
     <View className="flex-1 justify-center px-10 bg-background">
