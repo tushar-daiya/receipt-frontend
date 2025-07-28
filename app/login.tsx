@@ -1,5 +1,4 @@
 import { authClient } from "@/lib/auth-client";
-import { authStore } from "@/lib/auth-store";
 import { useSigninStore } from "@/lib/sign-in-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Link, useRouter } from "expo-router";
@@ -29,7 +28,6 @@ const login = () => {
     resolver: zodResolver(loginSchema),
   });
   const router = useRouter();
-  const { setEmail } = useSigninStore();
 
   const [error, setError] = React.useState<string | null>(null);
 

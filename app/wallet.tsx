@@ -1,6 +1,8 @@
+import { authStore } from "@/lib/auth-store";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
 import {
+  Alert,
   Pressable,
   SafeAreaView,
   ScrollView,
@@ -17,6 +19,7 @@ type Transaction = {
   icon: "arrow-down-left" | "arrow-up-right";
 };
 const WalletScreen = () => {
+  const { user } = authStore();
   const transactions: Transaction[] = [
     {
       id: 1,
@@ -79,7 +82,15 @@ const WalletScreen = () => {
           <View className="w-8" />
         </View>
 
-        {/* Address Section */}
+        <View className="rounded-xl mb-6 flex-row items-center">
+          <View className="rounded-xl p-4 mr-3 bg-secondary ">
+            <Feather name="user" size={20} color={"white"} />
+          </View>
+          <Pressable>
+            <Text className="text-white font-medium">Username</Text>
+            <Text className="text-slate-400 text-sm">{user?.username}</Text>
+          </Pressable>
+        </View>
         <View className="rounded-xl mb-6 flex-row items-center">
           <View className="rounded-xl p-4 mr-3 bg-secondary ">
             <Feather name="copy" size={20} color={"white"} />
@@ -91,13 +102,13 @@ const WalletScreen = () => {
         </View>
 
         {/* Balance Card */}
-        <View className="bg-slate-100 rounded-2xl p-6 mb-6 relative overflow-hidden">
+        <View className="bg-primaryMuted rounded-2xl p-6 mb-6 relative overflow-hidden">
           {/* Decorative shapes */}
           <View className="absolute top-4 right-4">
-            <View className="w-20 h-20 bg-amber-200 rounded-full opacity-60" />
+            <View className="w-32 h-32 bg-primary2 rounded-full opacity-60" />
           </View>
           <View className="absolute -top-4 right-8">
-            <View className="w-16 h-16 bg-amber-300 rounded-full opacity-40" />
+            <View className="w-24 h-24 bg-white rounded-full opacity-40" />
           </View>
 
           <View className="mt-8">
@@ -122,15 +133,39 @@ const WalletScreen = () => {
         </View>
 
         {/* Action Buttons */}
-        <View className="flex-row gap-6 mb-8">
-          <TouchableOpacity className="flex-1 bg-primary rounded-xl py-4">
+        <View className="flex-row gap-6 mb-4">
+          <TouchableOpacity
+            className="flex-1 bg-primary rounded-xl py-4"
+            onPress={() => Alert.alert("Receive TARA")}
+          >
             <Text className="text-black text-center font-semibold text-lg">
               Receive
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity className="flex-1 bg-secondary rounded-xl py-4">
+          <TouchableOpacity
+            className="flex-1 bg-secondary rounded-xl py-4"
+            onPress={() => Alert.alert("Send TARA")}
+          >
             <Text className="text-white text-center font-semibold text-lg">
               Send
+            </Text>
+          </TouchableOpacity>
+        </View>
+        <View className="flex-row gap-6 mb-8">
+          <TouchableOpacity
+            className="flex-1 bg-secondary rounded-xl py-4"
+            onPress={() => Alert.alert("Buy TARA")}
+          >
+            <Text className="text-white text-center font-semibold text-lg">
+              Buy
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            className="flex-1 bg-primary rounded-xl py-4"
+            onPress={() => Alert.alert("Swap TARA")}
+          >
+            <Text className="text-black text-center font-semibold text-lg">
+              Swap
             </Text>
           </TouchableOpacity>
         </View>
@@ -168,9 +203,14 @@ const WalletScreen = () => {
 
         {/* Disconnect Wallet */}
       </ScrollView>
-      <TouchableOpacity className="items-center py-4 mt-auto mb-6">
-        <Text className="text-slate-400 text-sm">Disconnect Wallet</Text>
-      </TouchableOpacity>
+      <View className="mb-6 mt-4">
+        <Pressable
+          className="bg-primary2 rounded-full py-3 flex-row justify-center items-center"
+          onPress={() => Alert.alert("Disconnect Wallet")}
+        >
+          <Text className="text-white">Disconnect Wallet</Text>
+        </Pressable>
+      </View>
     </SafeAreaView>
   );
 };

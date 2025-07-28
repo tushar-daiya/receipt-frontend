@@ -10,7 +10,10 @@ import "./globals.css";
 import { useSigninStore } from "@/lib/sign-in-store";
 
 // Configure Reanimated to suppress strict mode warnings
-import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import {
+  configureReanimatedLogger,
+  ReanimatedLogLevel,
+} from "react-native-reanimated";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -53,7 +56,6 @@ export default function RootLayout() {
     // Return null to keep showing splash screen
     return null;
   }
-
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background">
@@ -113,7 +115,6 @@ export default function RootLayout() {
     <QueryClientProvider client={queryClient}>
       <SafeAreaView className="flex-1 dark:bg-background bg-white">
         <Stack screenOptions={{ headerShown: false }}>
-          {/* Unauthenticated routes - accessible when NO session */}
           <Stack.Protected guard={!!!session}>
             <Stack.Protected guard={!!email}>
               <Stack.Screen name="otpVerification" />
@@ -122,11 +123,7 @@ export default function RootLayout() {
             <Stack.Screen name="signup" />
             <Stack.Screen name="login" />
             <Stack.Screen name="signin" />
-
-            {/* OTP Verification - accessible when no session BUT email is set */}
           </Stack.Protected>
-
-          {/* Authenticated routes - accessible when session exists */}
           <Stack.Protected guard={!!session}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="verify" />

@@ -1,12 +1,36 @@
 import { ProgressBar } from "@/components/ProgressBar";
+import { useReceiptStore } from "@/lib/verify-store";
 import { Feather } from "@expo/vector-icons";
-import { Stack, useRouter } from "expo-router";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Stack, useFocusEffect, useRouter } from "expo-router";
+import { useCallback } from "react";
+import { BackHandler, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 // import { Cross, Plus, X } from "lucide-react-native";
 
 export default function TabLayout() {
   const router = useRouter();
+  const { currentStep, setCurrentStep } = useReceiptStore();
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        if (currentStep > 1) {
+          const newStep = currentStep - 1;
+          setCurrentStep(newStep);
+          router.back();
+          return true; // Prevent default behavior
+        }
+        return false; // Allow default behavior (exit)
+      };
+
+      const subscription = BackHandler.addEventListener(
+        "hardwareBackPress",
+        onBackPress
+      );
+
+      return () => subscription?.remove();
+    }, [currentStep, setCurrentStep, router])
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-background">
       <View className="flex-1 bg-background">

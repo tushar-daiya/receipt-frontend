@@ -23,7 +23,7 @@ const GeometricShape = ({
   rotation?: number;
 }) => (
   <View
-    className={`absolute bg-green-500 rounded-lg ${className}`}
+    className={`absolute bg-primary opacity-10 -z-50 rounded-lg ${className}`}
     style={{
       transform: [{ rotate: `${rotation}deg` }],
     }}
@@ -105,10 +105,12 @@ export default function index() {
 
       {/* Main Content */}
       <View className="flex-1 justify-center items-center relative px-6 h-[400px]">
-        <Image
-          source={images.home_bg}
-          className="absolute w-96 h-96 -z-10 opacity-20"
-          resizeMode="contain"
+        <GeometricShape className="w-48 h-24 top-0 left-0" rotation={45} />
+        <GeometricShape className="w-48 h-32 top-10 right-0" rotation={-30} />
+        <GeometricShape className="w-48 h-20 bottom-0 left-0" rotation={60} />
+        <GeometricShape
+          className="w-28 h-28 bottom-10 right-0"
+          rotation={-45}
         />
 
         {/* Title and Description */}
@@ -137,9 +139,14 @@ export default function index() {
       <View className="px-6 pb-10">
         <View className="flex-row gap-4 mb-4">
           <StatCard title="Paper Saved" value="120" percentage="10%" />
-          <StatCard title="$ Saved" value="$ 5,400" percentage="5%" />
+          <StatCard
+            title="CO₂ kg"
+            value="25"
+            percentage="2%"
+            isNegative={true}
+          />
         </View>
-        <StatCard title="CO₂ kg" value="25" percentage="2%" isNegative={true} />
+        <StatCard title="Money Saved" value="$ 5,400" percentage="5%" />
       </View>
 
       {/* Recent Receipts Section Header */}

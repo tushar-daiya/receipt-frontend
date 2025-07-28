@@ -5,8 +5,8 @@ import { useRouter } from "expo-router";
 
 const Step2 = () => {
   const router = useRouter();
-  const { formData,setCurrentStep } = useReceiptStore();
-  function onSubmit(){
+  const { formData, setCurrentStep } = useReceiptStore();
+  function onSubmit() {
     setCurrentStep(3);
     router.push("/verify/step3");
   }
@@ -68,9 +68,9 @@ const Step2 = () => {
       <View className="mt-auto mb-6">
         <Pressable
           onPress={onSubmit}
-          className="bg-primary rounded-full py-3 flex-row justify-center items-center"
+          className="bg-primary2 rounded-full py-3 flex-row justify-center items-center"
         >
-          <Text className="text-black font-semibold">Next</Text>
+          <Text className="text-white">Next</Text>
         </Pressable>
       </View>
     </View>

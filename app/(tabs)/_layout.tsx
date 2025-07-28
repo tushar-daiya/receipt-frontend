@@ -55,9 +55,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="cards"
         options={{
-          title: "Cards",
+          title: "Wallet",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="credit-card" color={color} size={size || 24} />
+            <Feather name="user" color={color} size={size || 24} />
           ),
         }}
         listeners={{
@@ -73,7 +73,7 @@ export default function TabLayout() {
         options={{
           title: "Settings",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="user" color={color} size={size || 24} />
+            <Feather name="settings" color={color} size={size || 24} />
           ),
           animation: "fade",
         }}

@@ -47,22 +47,22 @@ const Share = () => {
               className="w-full aspect-[9/16] rounded-lg mt-4"
             />
             <View className="flex-1 gap-4 my-8">
-              <Pressable className="w-full bg-[#45EB12] rounded-full h-12 justify-center items-center">
-                <Text className="text-black text-center font-semibold">
+              <Pressable className="w-full bg-primary2 rounded-full h-12 justify-center items-center">
+                <Text className="text-white text-center font-semibold">
                   Save
                 </Text>
               </Pressable>
-              <Pressable className="w-full bg-[#2B4724] rounded-full h-12 justify-center items-center">
+              <Pressable className="w-full bg-primary2 rounded-full h-12 justify-center items-center">
                 <Text className="text-white text-center font-semibold">
                   Forward via Email
                 </Text>
               </Pressable>
-              <Pressable className="w-full bg-[#2B4724] rounded-full h-12 justify-center items-center">
+              <Pressable className="w-full bg-primary2 rounded-full h-12 justify-center items-center">
                 <Text className="text-white text-center font-semibold">
                   Forward to User
                 </Text>
               </Pressable>
-              <Pressable className="w-full bg-[#2B4724] rounded-full h-12 justify-center items-center">
+              <Pressable className="w-full bg-primary2 rounded-full h-12 justify-center items-center">
                 <Text className="text-white text-center font-semibold">
                   View on TaxFix
                 </Text>

@@ -1,7 +1,17 @@
-import { Session, User } from "better-auth/types";
+import { Session } from "better-auth/types";
 import { deleteItemAsync, getItem, setItem } from "expo-secure-store";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+type User = {
+  username?: string | null | undefined;
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  name: string;
+  createdAt: Date;
+  updatedAt: Date;
+  image?: string | null | undefined;
+};
 type AuthStore = {
   isFirstTime: boolean;
   setIsFirstTime: (isFirstTime: boolean) => void;

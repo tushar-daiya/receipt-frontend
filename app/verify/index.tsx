@@ -36,6 +36,7 @@ const Index = () => {
       category: formData.category,
     },
   });
+  
 
   function onSubmit(values: z.infer<typeof formSchema>) {
     const transactionFee = 0.05 * parseFloat(values.amount);
@@ -165,9 +166,9 @@ const Index = () => {
       <View className="mt-auto mb-6">
         <Pressable
           onPress={handleSubmit(onSubmit)}
-          className="bg-primary rounded-full py-3 flex-row justify-center items-center"
+          className="bg-primary2 rounded-full py-3 flex-row justify-center items-center"
         >
-          <Text className="text-black font-semibold">Next</Text>
+          <Text className="text-white">Next</Text>
         </Pressable>
       </View>
     </View>

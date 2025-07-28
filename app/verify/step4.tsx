@@ -36,12 +36,10 @@ export default function Step4() {
   const isCamera = formData.imageUploadMethod === "camera";
 
   if (isCamera && !permission) {
-    // Camera permissions are still loading.
     return <View />;
   }
 
   if (isCamera && permission && !permission.granted) {
-    // Camera permissions are not granted yet.
     return (
       <View className="flex-1 items-center justify-center bg-background">
         <Text className="text-white text-lg mb-4">
@@ -49,9 +47,9 @@ export default function Step4() {
         </Text>
         <Pressable
           onPress={() => requestPermission()}
-          className="bg-primary rounded-full px-6 py-3"
+          className="bg-primary2 rounded-full px-6 py-3"
         >
-          <Text className="text-black font-semibold">Grant Permission</Text>
+          <Text className="text-white">Grant Permission</Text>
         </Pressable>
       </View>
     );
@@ -167,33 +165,45 @@ export default function Step4() {
             <Pressable
               disabled={submitting}
               onPress={() => setImage(null)}
-              className={`${submitting ? "bg-primaryMuted" : "bg-primary"} rounded-full py-3 flex-row justify-center items-center`}
+              className={`${submitting ? "bg-primaryMuted" : "bg-primary2"} rounded-full py-3 flex-row justify-center items-center`}
             >
-              <Text className="text-black font-semibold">
+              <Text className="text-white">
                 {isCamera ? "Take new Image" : "Choose new Image"}
               </Text>
             </Pressable>
             <Pressable
               disabled={submitting}
               onPress={handleSubmit}
-              className={`${submitting ? "bg-primaryMuted" : "bg-primary"} rounded-full py-3 flex-row mt-4 justify-center items-center`}
+              className={`${submitting ? "bg-primaryMuted" : "bg-primary2"} rounded-full py-3 flex-row mt-4 justify-center items-center`}
             >
-              <Text className="text-black font-semibold">
+              <Text className="text-white">
                 {submitting ? "Submitting..." : "Submit"}
               </Text>
             </Pressable>
           </View>
         </>
       ) : isCamera ? (
-        <View className="h-[80%] w-auto aspect-[9/16] mx-auto">
-          <CameraView ref={ref} style={styles.camera} facing={facing}>
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.button} onPress={captureImage}>
-                <Text style={styles.text}>Capture</Text>
-              </TouchableOpacity>
+        <>
+          <View className="h-[80%] w-auto aspect-[9/16] mx-auto">
+            <View className="flex-1 items-center justify-center">
+              {/* <Image
+                source={{ uri: image.uri }}
+                className="w-full aspect-[9/16] mx-auto"
+                /> */}
+              <CameraView ref={ref} style={styles.camera} facing={facing}>
+                <View style={styles.buttonContainer}></View>
+              </CameraView>
             </View>
-          </CameraView>
-        </View>
+          </View>
+          <View className="mt-auto mb-6">
+            <Pressable
+              onPress={captureImage}
+              className="bg-primary2 rounded-full py-3 flex-row justify-center items-center"
+            >
+              <Text className="text-white">Capture</Text>
+            </Pressable>
+          </View>
+        </>
       ) : (
         <View className="h-[80%] w-auto aspect-[9/16] mx-auto">
           <View className="flex-1 bg-black rounded-lg items-center justify-center">
@@ -202,9 +212,9 @@ export default function Step4() {
           <View className="mt-auto mb-6">
             <Pressable
               onPress={pickImage}
-              className="bg-primary rounded-full py-3 flex-row justify-center items-center"
+              className="bg-primary2 rounded-full py-3 flex-row justify-center items-center"
             >
-              <Text className="text-black font-semibold">Choose Image</Text>
+              <Text className="text-white">Choose Image</Text>
             </Pressable>
           </View>
         </View>

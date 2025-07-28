@@ -45,13 +45,8 @@ const SettingsScreen = () => {
   };
   const menuItems = [
     {
-      title: "Wallet",
-      hasArrow: true,
-      onPress: () => router.push("/wallet"),
-    },
-    {
       title: "Gas",
-      rightText: "100 USDC",
+      rightText: "100 $",
       onPress: () => console.log("Gas pressed"),
     },
     {
