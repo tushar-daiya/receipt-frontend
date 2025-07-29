@@ -23,7 +23,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ className = "" }) => {
       {/* Progress Bar */}
       <View className="w-full h-2 bg-border rounded-full overflow-hidden">
         <View
-          className="h-full bg-primary rounded-full transition-all duration-300"
+          className="h-full bg-primary2 rounded-full transition-all duration-300"
           style={{ width: `${progress}%` }}
         />
       </View>

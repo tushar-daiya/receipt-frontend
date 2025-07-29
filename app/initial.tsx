@@ -30,7 +30,7 @@ const initialScreen = () => {
       />
       <Pressable
         onPress={() => router.push("/signup")}
-        className="bg-primary rounded-lg px-6 py-3 mt-5"
+        className="bg-primary2 rounded-lg px-6 py-3 mt-5"
       >
         <Text className="text-black font-semibold text-center">
           Get Started

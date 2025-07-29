@@ -1,12 +1,15 @@
 import { authStore } from "@/lib/auth-store";
+import { authClient } from "@/lib/auth-client";
 import { Feather } from "@expo/vector-icons";
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
+  Modal,
   Pressable,
   SafeAreaView,
   ScrollView,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -19,7 +22,52 @@ type Transaction = {
   icon: "arrow-down-left" | "arrow-up-right";
 };
 const WalletScreen = () => {
-  const { user } = authStore();
+  const { user, setUser } = authStore();
+  const [isUsernameModalVisible, setIsUsernameModalVisible] = useState(false);
+  const [newUsername, setNewUsername] = useState(user?.username || "");
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  const handleUpdateUsername = async () => {
+    if (!newUsername.trim()) {
+      Alert.alert("Error", "Username cannot be empty");
+      return;
+    }
+
+    if (newUsername === user?.username) {
+      setIsUsernameModalVisible(false);
+      return;
+    }
+
+    setIsUpdating(true);
+    try {
+      const { data, error } = await authClient.updateUser({
+        username: newUsername.trim(),
+      });
+
+      if (error) {
+        Alert.alert("Error", error.message || "Failed to update username");
+      } else {
+        // Update the user in the store
+        if (user) {
+          setUser({
+            ...user,
+            username: newUsername.trim(),
+          });
+        }
+        setIsUsernameModalVisible(false);
+        Alert.alert("Success", "Username updated successfully");
+      }
+    } catch (err) {
+      Alert.alert("Error", "An unexpected error occurred");
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const openUsernameModal = () => {
+    setNewUsername(user?.username || "");
+    setIsUsernameModalVisible(true);
+  };
   const transactions: Transaction[] = [
     {
       id: 1,
@@ -86,9 +134,14 @@ const WalletScreen = () => {
           <View className="rounded-xl p-4 mr-3 bg-secondary ">
             <Feather name="user" size={20} color={"white"} />
           </View>
-          <Pressable>
-            <Text className="text-white font-medium">Username</Text>
-            <Text className="text-slate-400 text-sm">{user?.username}</Text>
+          <Pressable onPress={openUsernameModal} className="flex-1">
+            <View className="flex-row items-center justify-between">
+              <View>
+                <Text className="text-white font-medium">Username</Text>
+                <Text className="text-slate-400 text-sm">{user?.username}</Text>
+              </View>
+              <Feather name="edit-2" size={16} color="#9ca3af" />
+            </View>
           </Pressable>
         </View>
         <View className="rounded-xl mb-6 flex-row items-center">
@@ -128,14 +181,14 @@ const WalletScreen = () => {
             <Text className="text-white font-medium">75%</Text>
           </View>
           <View className="bg-secondary rounded-full h-2">
-            <View className="bg-primary rounded-full h-2 w-3/4" />
+            <View className="bg-primary2 rounded-full h-2 w-3/4" />
           </View>
         </View>
 
         {/* Action Buttons */}
         <View className="flex-row gap-6 mb-4">
           <TouchableOpacity
-            className="flex-1 bg-primary rounded-xl py-4"
+            className="flex-1 bg-primary2 rounded-xl py-4"
             onPress={() => Alert.alert("Receive TARA")}
           >
             <Text className="text-black text-center font-semibold text-lg">
@@ -161,7 +214,7 @@ const WalletScreen = () => {
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            className="flex-1 bg-primary rounded-xl py-4"
+            className="flex-1 bg-primary2 rounded-xl py-4"
             onPress={() => Alert.alert("Swap TARA")}
           >
             <Text className="text-black text-center font-semibold text-lg">
@@ -211,6 +264,54 @@ const WalletScreen = () => {
           <Text className="text-white">Disconnect Wallet</Text>
         </Pressable>
       </View>
+
+      {/* Username Edit Modal */}
+      <Modal
+        visible={isUsernameModalVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setIsUsernameModalVisible(false)}
+      >
+        <View className="flex-1 bg-black/50 justify-center items-center px-6">
+          <View className="bg-background rounded-2xl p-6 w-full max-w-sm">
+            <Text className="text-white text-xl font-semibold mb-4 text-center">
+              Edit Username
+            </Text>
+            
+            <TextInput
+              value={newUsername}
+              onChangeText={setNewUsername}
+              placeholder="Enter new username"
+              placeholderTextColor="#9ca3af"
+              className="bg-secondary text-white rounded-xl px-4 py-3 mb-6 text-base"
+              autoFocus={true}
+              maxLength={30}
+            />
+            
+            <View className="flex-row gap-3">
+              <TouchableOpacity
+                className="flex-1 bg-secondary rounded-xl py-3"
+                onPress={() => setIsUsernameModalVisible(false)}
+                disabled={isUpdating}
+              >
+                <Text className="text-white text-center font-medium">
+                  Cancel
+                </Text>
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                className="flex-1 bg-primary2 rounded-xl py-3"
+                onPress={handleUpdateUsername}
+                disabled={isUpdating}
+              >
+                <Text className="text-black text-center font-medium">
+                  {isUpdating ? "Updating..." : "Update"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 };

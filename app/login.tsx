@@ -28,6 +28,7 @@ const login = () => {
     resolver: zodResolver(loginSchema),
   });
   const router = useRouter();
+  const { setEmail } = useSigninStore();
 
   const [error, setError] = React.useState<string | null>(null);
 
@@ -38,6 +39,27 @@ const login = () => {
     });
     if (error) {
       console.error("Login error:", error);
+      
+      // Check if the error is a 403 (forbidden) - user needs email verification
+      if (error.status === 403) {
+        // Send OTP for email verification
+        const { data: otpData, error: otpError } = await authClient.emailOtp.sendVerificationOtp({
+          email: values.email,
+          type: "sign-in",
+        });
+        
+        if (otpError) {
+          console.error("OTP sending error:", otpError);
+          setError(otpError.message || "Failed to send verification email");
+          return;
+        }
+        
+        // Store email in signin store and redirect to OTP verification
+        setEmail(values.email);
+        router.push("/otpVerification");
+        return;
+      }
+      
       setError(error.message || "An error occurred during login");
       return;
     }
@@ -99,7 +121,7 @@ const login = () => {
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
           className={`rounded-lg py-3 mt-4 flex-row justify-center items-center ${
-            isSubmitting ? "bg-primaryMuted" : "bg-primary"
+            isSubmitting ? "bg-primaryMuted" : "bg-primary2"
           }`}
         >
           {isSubmitting ? (

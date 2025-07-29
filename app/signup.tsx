@@ -153,7 +153,7 @@ const signup = () => {
             onPress={handleSubmit(onSubmit)}
             disabled={isSubmitting}
             className={`rounded-lg py-3 mt-4 flex-row justify-center items-center ${
-              isSubmitting ? "bg-primaryMuted" : "bg-primary"
+              isSubmitting ? "bg-primaryMuted" : "bg-primary2"
             }`}
           >
             {isSubmitting ? (

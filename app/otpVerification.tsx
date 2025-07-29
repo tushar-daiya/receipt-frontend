@@ -41,6 +41,8 @@ const OtpVerification = () => {
         return;
       }
       setEmail(null);
+      // Redirect to home page after successful verification
+      router.replace("/");
     } catch (error) {
       console.error("Unexpected error during OTP verification:", error);
       setError("An unexpected error occurred. Please try again later.");
@@ -77,7 +79,7 @@ const OtpVerification = () => {
         <Pressable
           onPress={handleSubmit(onSubmit)}
           disabled={isSubmitting}
-          className="rounded-lg py-3 bg-primary flex-row justify-center items-center"
+          className="rounded-lg py-3 bg-primary2 flex-row justify-center items-center"
         >
           <Text className="text-black">
             {isSubmitting ? "Verifying..." : "Verify OTP"}

@@ -84,7 +84,7 @@ export default function RootLayout() {
           <View className="w-full max-w-xs space-y-3">
             <Pressable
               onPress={() => refetch()}
-              className="bg-primary rounded-xl px-6 py-4 mb-3 shadow-lg"
+              className="bg-primary2 rounded-xl px-6 py-4 mb-3 shadow-lg"
             >
               <Text className="text-black font-bold text-center text-base">
                 Try Again

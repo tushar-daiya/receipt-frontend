@@ -23,7 +23,7 @@ const GeometricShape = ({
   rotation?: number;
 }) => (
   <View
-    className={`absolute bg-primary opacity-10 -z-50 rounded-lg ${className}`}
+    className={`absolute bg-primary2 opacity-10 -z-50 rounded-lg ${className}`}
     style={{
       transform: [{ rotate: `${rotation}deg` }],
     }}
