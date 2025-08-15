@@ -5,5 +5,6 @@ const images = {
   initial_1: require("@/assets/images/initial_1.png"),
   initial_2: require("@/assets/images/initial_2.png"),
   initial_3: require("@/assets/images/initial_3.png"),
+  logo: require("@/assets/images/logo.png"),
 };
 export default images;

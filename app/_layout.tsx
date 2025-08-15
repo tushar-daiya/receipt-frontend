@@ -1,37 +1,29 @@
+// prettier-ignore
+import "@walletconnect/react-native-compat";
+
+import { WalletConnectionHandler } from "@/components/WalletAdapter";
 import { authClient } from "@/lib/auth-client";
 import { authStore } from "@/lib/auth-store";
+import { wagmiConfig } from "@/lib/wallet-config";
+import { AppKit } from "@reown/appkit-wagmi-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, usePathname } from "expo-router";
-import { useEffect } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { WagmiProvider } from "wagmi";
 import "./globals.css";
-import { useSigninStore } from "@/lib/sign-in-store";
-
-// Configure Reanimated to suppress strict mode warnings
-import {
-  configureReanimatedLogger,
-  ReanimatedLogLevel,
-} from "react-native-reanimated";
-
-configureReanimatedLogger({
-  level: ReanimatedLogLevel.warn,
-  strict: false, // Disable strict mode
-});
 
 const queryClient = new QueryClient();
 
-// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
-export default function RootLayout() {
+function InnerLayout() {
   const pathname = usePathname();
   const { data, error, isPending, refetch } = authClient.useSession();
   const { session, setSession, setUser } = authStore();
-  const { email } = useSigninStore();
-
-  // Update Zustand store when session data changes
+  console.log("session", session);
   useEffect(() => {
     if (pathname === "/otpVerification") {
       return;
@@ -43,9 +35,8 @@ export default function RootLayout() {
       setSession(null);
       setUser(null);
     }
-  }, [data, setSession, setUser]);
+  }, [data, setSession, setUser, pathname]);
 
-  // Hide splash screen when loading is complete
   useEffect(() => {
     if (!isPending) {
       SplashScreen.hideAsync();
@@ -53,21 +44,18 @@ export default function RootLayout() {
   }, [isPending]);
 
   if (isPending) {
-    // Return null to keep showing splash screen
     return null;
   }
+
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background">
         <View className="flex-1 justify-center items-center px-8">
-          {/* Error Icon */}
           <View className="mb-8">
             <View className="w-20 h-20 bg-red-500/10 rounded-full justify-center items-center">
               <Text className="text-red-500 text-4xl">⚠️</Text>
             </View>
           </View>
-
-          {/* Error Content */}
           <View className="items-center mb-8">
             <Text className="text-white text-2xl font-bold mb-4 text-center">
               Oops! Something went wrong
@@ -79,8 +67,6 @@ export default function RootLayout() {
               This might be a temporary issue.
             </Text>
           </View>
-
-          {/* Action Buttons */}
           <View className="w-full max-w-xs space-y-3">
             <Pressable
               onPress={() => refetch()}
@@ -90,7 +76,6 @@ export default function RootLayout() {
                 Try Again
               </Text>
             </Pressable>
-
             <Pressable
               onPress={() => authClient.signOut()}
               className="bg-transparent border border-gray-600 rounded-xl px-6 py-4"
@@ -100,8 +85,6 @@ export default function RootLayout() {
               </Text>
             </Pressable>
           </View>
-
-          {/* Helper Text */}
           <Text className="text-gray-600 text-xs text-center mt-6 leading-4">
             If the problem persists, please check your internet connection
             {"\n"}or contact support.
@@ -112,24 +95,34 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaView className="flex-1 dark:bg-background bg-white">
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Protected guard={!!!session}>
-            <Stack.Protected guard={!!email}>
-              <Stack.Screen name="otpVerification" />
-            </Stack.Protected>
-            <Stack.Screen name="initial" />
-            <Stack.Screen name="signup" />
-            <Stack.Screen name="login" />
-            <Stack.Screen name="signin" />
-          </Stack.Protected>
-          <Stack.Protected guard={!!session}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="verify" />
-          </Stack.Protected>
-        </Stack>
-      </SafeAreaView>
-    </QueryClientProvider>
+    <SafeAreaView className="flex-1 dark:bg-background bg-white">
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={!session}>
+          <Stack.Screen name="initial" />
+          <Stack.Screen name="signup" />
+          <Stack.Screen name="login" />
+          <Stack.Screen name="signin" />
+          <Stack.Screen name="credentials" />
+
+          <Stack.Screen name="otpVerification" />
+        </Stack.Protected>
+        <Stack.Protected guard={!!session}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="verify" />
+        </Stack.Protected>
+      </Stack>
+    </SafeAreaView>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <AppKit />
+        <WalletConnectionHandler />
+        <InnerLayout />
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }

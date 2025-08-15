@@ -28,7 +28,7 @@ const SettingsScreen = () => {
         },
         {
           text: "Logout",
-          style: "destructive", // This makes it red on iOS
+          style: "destructive",
           onPress: async () => {
             const { data, error } = await authClient.signOut();
             if (error) {
@@ -40,10 +40,15 @@ const SettingsScreen = () => {
           },
         },
       ],
-      { cancelable: true } // Allows dismissing by tapping outside on Android
+      { cancelable: true }
     );
   };
   const menuItems = [
+    {
+      title: "Wallet",
+      hasArrow: true,
+      onPress: () => router.push("/wallet"),
+    },
     {
       title: "Gas",
       rightText: "100 $",
@@ -147,15 +152,12 @@ const SettingsScreen = () => {
         <View className="w-8" />
       </View>
 
-      {/* Menu Items */}
       <View className="flex-1 pt-5">
         {/* Wallet */}
         {renderMenuItem(menuItems[0], 0)}
 
-        {/* Gas */}
         {renderMenuItem(menuItems[1], 1)}
 
-        {/* Notifications - Special case with toggle */}
         <View className="flex-row items-center justify-between px-5 py-4">
           <Text className="text-base text-white">Notifications</Text>
           <Switch
@@ -170,7 +172,7 @@ const SettingsScreen = () => {
         {/* Rest of menu items */}
         {menuItems
           .slice(2)
-          .map((item, index) => renderMenuItem(item, index + 3))}
+          .map((item, index) => renderMenuItem(item, index + 2))}
       </View>
     </SafeAreaView>
   );

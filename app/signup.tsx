@@ -1,5 +1,9 @@
+import { authClient } from "@/lib/auth-client";
+import { useSigninStore } from "@/lib/sign-in-store";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Link, router } from "expo-router";
 import React from "react";
-import { z } from "zod";
+import { Controller, useForm } from "react-hook-form";
 import {
   ActivityIndicator,
   Keyboard,
@@ -9,11 +13,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from "react-native";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Controller, useForm } from "react-hook-form";
-import { Link, router } from "expo-router";
-import { authClient } from "@/lib/auth-client";
-import { useSigninStore } from "@/lib/sign-in-store";
+import { z } from "zod";
 const signupSchema = z.object({
   fullName: z.string("Full name is required").min(1, "Full name is required"),
   username: z.string("Username is required").min(1, "Username is required"),

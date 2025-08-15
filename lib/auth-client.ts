@@ -4,10 +4,10 @@ import { createAuthClient } from "better-auth/react";
 import * as SecureStore from "expo-secure-store";
 
 export const authClient = createAuthClient({
-  baseURL: "https://receipt-backend-hqjf.onrender.com", // Base URL of your Better Auth backend.
+  baseURL: "http://10.70.175.178:4000", // Base URL of your Better Auth backend.
   plugins: [
     expoClient({
-      scheme: "receipt",
+      scheme: "receiptdapp",
       storagePrefix: "receipt",
       storage: SecureStore,
     }),

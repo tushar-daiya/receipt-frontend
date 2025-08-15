@@ -1,11 +1,11 @@
 {
   "expo": {
     "name": "receipt",
-    "slug": "receipt",
+    "slug": "freelance-project",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "receipt",
+    "scheme": "receiptdapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
@@ -61,8 +61,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "bd884d54-c181-4954-8f8e-6aaf4281e55b"
+        "projectId": "dbf9bb97-49d0-49ba-8b0b-62903cf49c2b"
       }
-    }
+    },
+    "owner": "sandeeptestexpo"
   }
 }
