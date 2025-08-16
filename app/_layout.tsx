@@ -1,15 +1,15 @@
 // prettier-ignore
 import "@walletconnect/react-native-compat";
 
-import { WalletConnectionHandler } from "@/components/WalletAdapter";
 import { authClient } from "@/lib/auth-client";
 import { authStore } from "@/lib/auth-store";
 import { wagmiConfig } from "@/lib/wallet-config";
 import { AppKit } from "@reown/appkit-wagmi-react-native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
 import { Stack, usePathname } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WagmiProvider } from "wagmi";
@@ -102,7 +102,6 @@ function InnerLayout() {
           <Stack.Screen name="signup" />
           <Stack.Screen name="login" />
           <Stack.Screen name="signin" />
-          <Stack.Screen name="credentials" />
 
           <Stack.Screen name="otpVerification" />
         </Stack.Protected>
@@ -120,7 +119,6 @@ export default function RootLayout() {
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
         <AppKit />
-        <WalletConnectionHandler />
         <InnerLayout />
       </QueryClientProvider>
     </WagmiProvider>

@@ -2,9 +2,15 @@ import {
   createAppKit,
   defaultWagmiConfig,
 } from "@reown/appkit-wagmi-react-native";
-import { arbitrum, mainnet, polygon } from "@wagmi/core/chains";
+import {
+  arbitrum,
+  mainnet,
+  polygon,
+  taraxa,
+  taraxaTestnet,
+} from "@wagmi/core/chains";
 
-const projectId = "3ccc1b3d09166eade6cb3bcff870fec6";
+const projectId = process.env.PROJECT_ID as string;
 
 const metadata = {
   name: "Receipt dApp",
@@ -17,14 +23,14 @@ const metadata = {
   },
 };
 
-const chains = [mainnet, polygon, arbitrum] as const;
+const chains = [mainnet, polygon, arbitrum, taraxa, taraxaTestnet] as const;
 
 export const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 
-createAppKit({
+export const modal = createAppKit({
   projectId,
   metadata,
   wagmiConfig,
-  defaultChain: mainnet,
+  defaultChain: taraxaTestnet,
   enableAnalytics: true,
 });

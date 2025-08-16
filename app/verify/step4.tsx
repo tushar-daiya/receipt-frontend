@@ -9,22 +9,14 @@ import {
 import * as ImagePicker from "expo-image-picker";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
-import {
-  Alert,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Alert, Image, Pressable, StyleSheet, Text, View } from "react-native";
 
 export default function Step4() {
   const { mutateAsync } = getPresignedUrl({ params: {} });
   const { mutateAsync: createReceiptMutateAsync } = createReceipt({
     params: {},
   });
-  const { formData, resetForm } = useReceiptStore();
+  const { formData, resetForm, setCurrentStep } = useReceiptStore();
   const [submitting, setSubmitting] = useState(false);
   const [facing, setFacing] = useState<CameraType>("back");
   const [image, setImage] = useState<
@@ -80,6 +72,7 @@ export default function Step4() {
       console.error("Image picker error:", error);
     }
   }
+
   async function handleSubmit() {
     if (!image) {
       console.error("No image captured");
@@ -139,8 +132,8 @@ export default function Step4() {
         return;
       }
       setImage(null);
-      resetForm();
-      router.replace("/");
+      setCurrentStep(5); // Update the current step to 5
+      router.push("/verify/step5"); // Navigate to step5
     } catch (error) {
       Alert.alert("Error", "An unexpected error occurred. Please try again.");
       console.log("Error getting presigned URL:", error);
@@ -186,10 +179,6 @@ export default function Step4() {
         <>
           <View className="h-[80%] w-auto aspect-[9/16] mx-auto">
             <View className="flex-1 items-center justify-center">
-              {/* <Image
-                source={{ uri: image.uri }}
-                className="w-full aspect-[9/16] mx-auto"
-                /> */}
               <CameraView ref={ref} style={styles.camera} facing={facing}>
                 <View style={styles.buttonContainer}></View>
               </CameraView>
@@ -232,8 +221,6 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
   },
   camera: {
-    // height: "70%",
-    // width: "50%",
     aspectRatio: 9 / 16,
     width: "100%",
     height: "100%",
