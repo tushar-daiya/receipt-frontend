@@ -3,8 +3,8 @@ import "@walletconnect/react-native-compat";
 
 import { authClient } from "@/lib/auth-client";
 import { authStore } from "@/lib/auth-store";
-import { wagmiConfig } from "@/lib/wallet-config";
-import { AppKit } from "@reown/appkit-wagmi-react-native";
+import { appKitModal, wagmiConfig } from "@/lib/wallet-config";
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 import { Stack, usePathname } from "expo-router";
@@ -19,9 +19,11 @@ const queryClient = new QueryClient();
 
 SplashScreen.preventAutoHideAsync();
 
+console.log("AppKit Initialized:", appKitModal);
+
 function InnerLayout() {
   const pathname = usePathname();
-  const { data, error, isPending, refetch } = authClient.useSession();
+  const { data, error, isPending, refetch } = authClient.useSession() || {};
   const { session, setSession, setUser } = authStore();
   console.log("session", session);
   useEffect(() => {
@@ -118,7 +120,7 @@ export default function RootLayout() {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={queryClient}>
-        <AppKit />
+        {/* <AppKit /> */}
         <InnerLayout />
       </QueryClientProvider>
     </WagmiProvider>

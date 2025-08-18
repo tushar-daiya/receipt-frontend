@@ -10,7 +10,7 @@ import {
   taraxaTestnet,
 } from "@wagmi/core/chains";
 
-const projectId = process.env.PROJECT_ID as string;
+const projectId = "3ccc1b3d09166eade6cb3bcff870fec6";
 
 const metadata = {
   name: "Receipt dApp",
@@ -26,8 +26,7 @@ const metadata = {
 const chains = [mainnet, polygon, arbitrum, taraxa, taraxaTestnet] as const;
 
 export const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
-
-export const modal = createAppKit({
+export const appKitModal = createAppKit({
   projectId,
   metadata,
   wagmiConfig,
