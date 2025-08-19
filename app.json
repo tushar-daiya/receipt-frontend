@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "receipt",
-    "slug": "receipt",
+    "name": "receiptdapp",
+    "slug": "receiptdapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "receipt",
+    "scheme": "receiptdapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
