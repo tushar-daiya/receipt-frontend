@@ -1,11 +1,15 @@
 import ImageDownloader from "@/components/ImageDownloader";
 import images from "@/constants/images";
 import { getReceipt } from "@/lib/api/receipts";
+import { useGetTransaction } from "@/lib/api/transaction";
 import { Receipt } from "@/lib/types";
 import { Feather } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard"; // Import Clipboard API
+import * as Linking from "expo-linking";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
@@ -14,6 +18,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAccount } from "wagmi";
 
 const Page = () => {
   const router = useRouter();
@@ -26,6 +31,37 @@ const Page = () => {
     params: {},
     id: id as string,
   });
+
+  const { address: wallet_address } = useAccount();
+
+  const { data: transactionData } = useGetTransaction({
+    params: { wallet_address: wallet_address || "" },
+  });
+
+  const handleVerify = async () => {
+    if (!transactionData || !transactionData.transactions.length) {
+      Alert.alert("No Transactions", "No transactions found for this wallet.");
+      return;
+    }
+
+    const lastTransaction = transactionData.transactions[0];
+    const transactionHash = lastTransaction.hash;
+
+    await Clipboard.setStringAsync(transactionHash);
+    Alert.alert(
+      "Transaction Copied",
+      "The transaction hash has been copied to your clipboard."
+    );
+
+    const explorerUrl = `https://explorer.testnet.taraxa.io/tx/${transactionHash}`;
+    Linking.openURL(explorerUrl).catch((error) => {
+      Alert.alert(
+        "Error",
+        "Failed to open Taraxa Explorer. Please check your internet connection."
+      );
+      console.error("Failed to open Taraxa Explorer:", error);
+    });
+  };
 
   const receipt: Receipt = data?.receipt;
 
@@ -115,7 +151,10 @@ const Page = () => {
             </View>
           </ScrollView>
           <View className="h-20 flex-row justify-between items-center mb-4">
-            <Pressable className="flex-1 bg-[#B0E8C9] rounded-xl py-4 mx-4">
+            <Pressable
+              className="flex-1 bg-[#B0E8C9] rounded-xl py-4 mx-4"
+              onPress={handleVerify}
+            >
               <Text className="text-black text-center">Verify</Text>
             </Pressable>
             <Pressable

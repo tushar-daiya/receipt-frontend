@@ -2,12 +2,10 @@ import { listReceipts } from "@/lib/api/receipts";
 import { useGetTransaction } from "@/lib/api/transaction";
 import { Receipt } from "@/lib/types";
 import { Feather } from "@expo/vector-icons";
-import * as Clipboard from "expo-clipboard"; // Import Clipboard API
-import * as Linking from "expo-linking";
+
 import { Link, useRouter } from "expo-router";
 import React from "react";
 import {
-  Alert,
   FlatList,
   Image,
   SafeAreaView,
@@ -93,31 +91,6 @@ export default function index() {
     params: { wallet_address: wallet_address || "" },
   });
 
-  const handleVerify = async () => {
-    if (!transactionData || !transactionData.transactions.length) {
-      Alert.alert("No Transactions", "No transactions found for this wallet.");
-      return;
-    }
-
-    const lastTransaction = transactionData.transactions[0];
-    const transactionHash = lastTransaction.hash;
-
-    await Clipboard.setStringAsync(transactionHash);
-    Alert.alert(
-      "Transaction Copied",
-      "The transaction hash has been copied to your clipboard."
-    );
-
-    const explorerUrl = `https://explorer.testnet.taraxa.io/tx/${transactionHash}`;
-    Linking.openURL(explorerUrl).catch((error) => {
-      Alert.alert(
-        "Error",
-        "Failed to open Taraxa Explorer. Please check your internet connection."
-      );
-      console.error("Failed to open Taraxa Explorer:", error);
-    });
-  };
-
   const { data, isError, isPending, error, isSuccess } = listReceipts({
     params: {},
   });
@@ -161,10 +134,7 @@ export default function index() {
         </View>
 
         {/* Verify Button */}
-        <TouchableOpacity
-          onPress={handleVerify}
-          className="bg-primary2 px-8 py-3 rounded-3xl mb-5 z-10"
-        >
+        <TouchableOpacity className="bg-primary2 px-8 py-3 rounded-3xl mb-5 z-10">
           <Text className="text-lg font-semibold text-white">Verify</Text>
         </TouchableOpacity>
       </View>
