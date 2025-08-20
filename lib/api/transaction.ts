@@ -23,3 +23,26 @@ export function useCreateTransaction() {
     },
   });
 }
+
+export function useGetTransaction({
+  params,
+}: {
+  params: Record<string, string>;
+}) {
+  const queryClient = useQueryClient();
+  const cookies = authClient.getCookie();
+  return useApiRequest({
+    endpoint: apiEndpoints.transactionsEndpoints.get(params.wallet_address),
+    queryKey: ["transactions", "get", params.wallet_address],
+    params,
+    headers: {
+      Cookie: cookies,
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["transactions", "list"],
+        exact: false,
+      });
+    },
+  });
+}

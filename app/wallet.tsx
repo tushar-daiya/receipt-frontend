@@ -12,17 +12,19 @@ const WalletScreen = () => {
 
   useEffect(() => {
     if (isConnected && !wasConnected.current && address) {
-      createWallet(
-        { wallet_address: address },
-        {
-          onSuccess: () => {
-            console.log("Wallet created successfully!");
-          },
-          onError: (error) => {
-            console.error("Error creating wallet:", error);
-          },
-        }
-      );
+      if (createWallet) {
+        createWallet(
+          { wallet_address: address },
+          {
+            onSuccess: () => {
+              console.log("Wallet created successfully!");
+            },
+            onError: (error) => {
+              console.error("Error creating wallet:", error);
+            },
+          }
+        );
+      }
     }
     wasConnected.current = isConnected;
   }, [isConnected, address, createWallet]);

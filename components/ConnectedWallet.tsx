@@ -1,3 +1,4 @@
+import { useGetTransaction } from "@/lib/api/transaction";
 import { authStore } from "@/lib/auth-store";
 import { Feather } from "@expo/vector-icons";
 import { Pressable, SafeAreaView, ScrollView, Text, View } from "react-native";
@@ -9,6 +10,15 @@ const ConnectedWalletScreen = () => {
   const { user } = authStore();
   const { disconnect } = useDisconnect();
   const result = useBalance({ address, chainId: taraxaTestnet.id });
+
+  // Fetch transactions for the connected wallet
+  const {
+    data: transactionData,
+    isPending: isLoading,
+    isError,
+  } = useGetTransaction({
+    params: { wallet_address: address || "" },
+  });
 
   return (
     <SafeAreaView className="flex-1 bg-background px-6">
@@ -76,6 +86,39 @@ const ConnectedWalletScreen = () => {
             {result.data?.formatted} {result.data?.symbol.toLowerCase()}
           </Text>
         </View>
+      </View>
+
+      {/* Transactions Section */}
+      <View className="bg-primaryMuted rounded-2xl p-6 mb-6">
+        <Text className="text-slate-800 text-lg font-medium mb-4">
+          Recent Transactions
+        </Text>
+        {isLoading && <Text className="text-slate-400">Loading...</Text>}
+        {isError && (
+          <Text className="text-red-500">Failed to load transactions.</Text>
+        )}
+        {transactionData?.transactions?.length ? (
+          transactionData.transactions.map((txn: any, index: any) => (
+            <View
+              key={index}
+              className="flex-row justify-between items-center mb-4"
+            >
+              <View>
+                <Text className="text-slate-900 font-medium">
+                  {txn.hash.slice(0, 6)}...{txn.hash.slice(-4)}
+                </Text>
+                <Text className="text-slate-400 text-sm">
+                  Block: {txn.blockNumber}
+                </Text>
+              </View>
+              <Text className="text-slate-800 font-medium">
+                {txn.value} TARA
+              </Text>
+            </View>
+          ))
+        ) : (
+          <Text className="text-slate-400">No transactions found.</Text>
+        )}
       </View>
 
       <View className="py-4">

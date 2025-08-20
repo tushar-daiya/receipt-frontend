@@ -17,6 +17,7 @@ export interface ReceiptFormData {
   // Step 4: Image Upload
   imageUri: string;
   receiptId: string | null;
+  wallet_address: string | null;
 }
 
 interface ReceiptStore {
@@ -33,6 +34,8 @@ interface ReceiptStore {
   resetForm: () => void;
   getTotalSteps: () => number;
   getProgress: () => number;
+  getWalletAddress: () => string | null;
+  setWalletAddress: (address: string | null) => void;
   calculateTransactionFee: () => void;
 }
 
@@ -46,6 +49,7 @@ const initialFormData: ReceiptFormData = {
   imageUploadMethod: "camera",
   imageUri: "",
   receiptId: null,
+  wallet_address: "",
 };
 
 export const useReceiptStore = create<ReceiptStore>((set, get) => ({
@@ -57,6 +61,11 @@ export const useReceiptStore = create<ReceiptStore>((set, get) => ({
     set((state) => ({
       formData: { ...state.formData, receiptId: id },
     })),
+  setWalletAddress: (address: string | null) =>
+    set((state) => ({
+      formData: { ...state.formData, wallet_address: address },
+    })),
+  getWalletAddress: () => get().formData.wallet_address,
 
   setCurrentStep: (step: number) => set({ currentStep: step }),
 
