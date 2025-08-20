@@ -108,7 +108,7 @@ export default function index() {
       "The transaction hash has been copied to your clipboard."
     );
 
-    const explorerUrl = `https://explorer.testnet.taraxa.io/transaction/${transactionHash}`;
+    const explorerUrl = `https://explorer.testnet.taraxa.io/tx/${transactionHash}`;
     Linking.openURL(explorerUrl).catch((error) => {
       Alert.alert(
         "Error",
