@@ -5,6 +5,7 @@ import { useAccount } from "wagmi";
 import { useCreateWallet } from "../lib/api/wallet";
 
 const WalletScreen = () => {
+  // const { reconnect, isPending } = useReconnect();
   const { isConnected, address } = useAccount();
   const { mutate: createWallet } = useCreateWallet();
 

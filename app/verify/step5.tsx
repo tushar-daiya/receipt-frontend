@@ -19,6 +19,7 @@ export default function Step5() {
   const { formData, resetForm } = useReceiptStore();
   const { amount, vendor, date, category, receiptId } = formData;
   const router = useRouter();
+  console.log("address", address);
 
   const [txnHash, setTxnHash] = useState<`0x${string}` | undefined>(undefined);
   const {
