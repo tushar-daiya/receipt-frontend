@@ -192,7 +192,7 @@ export default function Step5() {
           onPress={handleSubmit}
           disabled={isProcessing}
           className={`rounded-full py-3 flex-row justify-center items-center ${
-            isProcessing ? "bg-white" : "bg-primary2"
+            isProcessing ? "bg-primary" : "bg-primary2"
           }`}
         >
           {isProcessing && (

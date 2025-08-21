@@ -34,6 +34,7 @@ export const config = defaultWagmiConfig({
     [taraxaTestnet.id]: http(),
     [mainnet.id]: http(),
   },
+  enableWalletConnect: false,
 });
 
 createWeb3Modal({
