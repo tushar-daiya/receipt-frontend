@@ -134,7 +134,10 @@ export default function index() {
         </View>
 
         {/* Verify Button */}
-        <TouchableOpacity className="bg-primary2 px-8 py-3 rounded-3xl mb-5 z-10">
+        <TouchableOpacity
+          className="bg-primary2 px-8 py-3 rounded-3xl mb-5 z-10"
+          onPress={() => router.push("/verify")}
+        >
           <Text className="text-lg font-semibold text-white">Verify</Text>
         </TouchableOpacity>
       </View>
