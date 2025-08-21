@@ -119,7 +119,7 @@ export default function RootLayout() {
   }
 
   return (
-    <WagmiProvider config={config}>
+    <WagmiProvider config={config} reconnectOnMount={false}>
       <QueryClientProvider client={queryClient}>
         <SafeAreaView className="flex-1 dark:bg-background bg-white">
           <Stack screenOptions={{ headerShown: false }}>
