@@ -1,15 +1,13 @@
 import { useGetTransaction } from "@/lib/api/transaction";
 import { authStore } from "@/lib/auth-store";
 import { Feather } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Alert,
-  Modal,
   Pressable,
   SafeAreaView,
   ScrollView,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -26,14 +24,30 @@ const ConnectedWalletScreen = () => {
   const [newUsername, setNewUsername] = useState(user?.username || "");
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Fetch transactions for the connected wallet
-  const {
-    data: transactionData,
-    isPending: isLoading,
-    isError,
-  } = useGetTransaction({
+  const [transactionData, setTransactionData] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+
+  const { refetch } = useGetTransaction({
     params: { wallet_address: address || "" },
+    options: { enabled: false },
   });
+
+  useEffect(() => {
+    if (isConnected && address) {
+      setIsLoading(true);
+      refetch()
+        .then((res: any) => {
+          console.log("Transaction Data1:", res);
+          setTransactionData(res?.data);
+          setIsError(false);
+        })
+        .catch(() => setIsError(true))
+        .finally(() => setIsLoading(false));
+    }
+  }, [isConnected, address, refetch]);
+
+  console.log("Transaction Data:", transactionData);
 
   const openUsernameModal = () => {
     setNewUsername(user?.username || "");
@@ -66,6 +80,7 @@ const ConnectedWalletScreen = () => {
           </Pressable>
         </View>
 
+        {/* Wallet Address */}
         <View className="rounded-xl mb-6 flex-row items-center">
           <View className="rounded-xl p-4 mr-3 bg-secondary">
             <Feather name="copy" size={20} color={"white"} />
@@ -78,7 +93,6 @@ const ConnectedWalletScreen = () => {
 
         {/* Balance Card */}
         <View className="bg-primaryMuted rounded-2xl p-6 mb-6 relative overflow-hidden">
-          {/* Decorative shapes */}
           <View className="absolute top-4 right-4">
             <View className="w-32 h-32 bg-primary2 rounded-full opacity-60" />
           </View>
@@ -91,7 +105,7 @@ const ConnectedWalletScreen = () => {
               Your Current Balance
             </Text>
             <Text className="text-slate-900 text-3xl font-bold">
-              {result.data?.formatted} {result.data?.symbol.toLowerCase()}
+              {result.data?.formatted} {result.data?.symbol?.toLowerCase()}
             </Text>
           </View>
         </View>
@@ -135,31 +149,25 @@ const ConnectedWalletScreen = () => {
         </View>
 
         {/* Transactions Section */}
-        <View className="bg-primaryMuted rounded-2xl p-6 mb-6">
-          <Text className="text-slate-800 text-lg font-medium mb-4">
-            Recent Transactions
+        <View className=" rounded-2xl p-6 mb-6">
+          <Text className="text-white text-lg font-medium mb-4">
+            Recent Transaction
           </Text>
-          {isLoading && <Text className="text-slate-400">Loading...</Text>}
-          {isError && (
-            <Text className="text-red-500">Failed to load transactions.</Text>
-          )}
-          {transactionData?.transactions?.length ? (
-            transactionData.transactions.map((txn: any, index: any) => (
-              <View
-                key={index}
-                className="flex-row justify-between items-center mb-4"
-              >
-                <View>
-                  <Text className="text-slate-900 font-medium">
-                    {txn.hash.slice(0, 6)}...{txn.hash.slice(-4)}
+
+          {Array.isArray(transactionData) && transactionData.length > 0 ? (
+            transactionData.map((tx: any, idx: number) => (
+              <View key={idx} className="flex-row items-center py-4">
+                <View className="bg-secondary rounded-lg p-4 mr-3">
+                  <Feather name="arrow-up-right" size={24} color="#10b981" />
+                </View>
+                <View className="flex-1">
+                  <Text className="text-white font-medium">
+                    Tx: {tx.trxnHash}
                   </Text>
                   <Text className="text-slate-400 text-sm">
-                    Block: {txn.blockNumber}
+                    Block: {tx.blockNumber}
                   </Text>
                 </View>
-                <Text className="text-slate-800 font-medium">
-                  {txn.value} TARA
-                </Text>
               </View>
             ))
           ) : (
@@ -183,44 +191,6 @@ const ConnectedWalletScreen = () => {
           <Text className="text-white font-semibold text-lg">Disconnect</Text>
         </Pressable>
       </View>
-
-      {/* Username Edit Modal */}
-      <Modal
-        visible={isUsernameModalVisible}
-        transparent={true}
-        animationType="fade"
-        onRequestClose={() => setIsUsernameModalVisible(false)}
-      >
-        <View className="flex-1 bg-black/50 justify-center items-center px-6">
-          <View className="bg-background rounded-2xl p-6 w-full max-w-sm">
-            <Text className="text-white text-xl font-semibold mb-4 text-center">
-              Edit Username
-            </Text>
-
-            <TextInput
-              value={newUsername}
-              onChangeText={setNewUsername}
-              placeholder="Enter new username"
-              placeholderTextColor="#9ca3af"
-              className="bg-secondary text-white rounded-xl px-4 py-3 mb-6 text-base"
-              autoFocus={true}
-              maxLength={30}
-            />
-
-            <View className="flex-row gap-3">
-              <TouchableOpacity
-                className="flex-1 bg-secondary rounded-xl py-3"
-                onPress={() => setIsUsernameModalVisible(false)}
-                disabled={isUpdating}
-              >
-                <Text className="text-white text-center font-medium">
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
     </SafeAreaView>
   );
 };

@@ -9,8 +9,8 @@ const walletEndpoints = {
 };
 
 const transactionsEndpoints = {
-  base: "/transactions/",
-  get: (wallet_address: string) => `/transactions/${wallet_address}`,
+  base: "/transaction/",
+  get: (wallet_address: string) => `/transaction/${wallet_address}`,
 };
 export const apiEndpoints = {
   receiptsEndpoints,

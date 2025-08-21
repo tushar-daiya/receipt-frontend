@@ -5,7 +5,6 @@ import receiptManagerAbi from "../../contract/receiptManager.json";
 
 import { useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-
 import { ActivityIndicator, Alert, Pressable, Text, View } from "react-native";
 import { parseGwei } from "viem";
 import { taraxaTestnet } from "viem/chains";
@@ -72,77 +71,74 @@ export default function Step5() {
 
   useEffect(() => {
     if (isConfirmed && contractData && address && receiptId && txnHash) {
-      if (createTransaction) {
-        createTransaction(
-          {
-            receiptId,
-            gas: contractData.gasUsed.toString(),
-            blockNumber: contractData.blockNumber.toString(),
-            network: taraxaTestnet.name,
-            wallet_address: address,
-            hash: txnHash,
-            status: "SUCCESS",
-          },
-          {
-            onSuccess: () => {
-              Alert.alert(
-                "Success!",
-                "Your receipt was confirmed on-chain and saved to your history.",
-                [
-                  {
-                    text: "OK",
-                    onPress: () => {
-                      resetForm();
-                      router.push("/");
-                    },
+      console.log("trxnhash", txnHash);
+      createTransaction(
+        {
+          receiptId,
+          gas: contractData.gasUsed.toString(),
+          blockNumber: contractData.blockNumber.toString(),
+          network: taraxaTestnet.name,
+          wallet_address: address,
+          trxnHash: txnHash,
+          status: "SUCCESS",
+        },
+        {
+          onSuccess: () => {
+            Alert.alert(
+              "Success!",
+              "Your receipt was confirmed on-chain and saved to your history.",
+              [
+                {
+                  text: "OK",
+                  onPress: () => {
+                    resetForm();
+                    router.push("/");
                   },
-                ]
-              );
-            },
-            onError: (error) => {
-              Alert.alert(
-                "Save Failed",
-                `Transaction was confirmed on-chain but failed to save. Please contact support. Error: ${error.message}`,
-                [{ text: "OK", onPress: () => router.push("/") }]
-              );
-            },
-          }
-        );
-      }
+                },
+              ]
+            );
+          },
+          onError: (error) => {
+            Alert.alert(
+              "Save Failed",
+              `Transaction was confirmed on-chain but failed to save. Please contact support. Error: ${error.message}`,
+              [{ text: "OK", onPress: () => router.push("/") }]
+            );
+          },
+        }
+      );
     }
   }, [isConfirmed, contractData]);
 
   useEffect(() => {
     if (isTxError && address && receiptId && txnHash) {
-      if (createTransaction) {
-        createTransaction(
-          {
-            receiptId,
-            gas: "0",
-            blockNumber: "0",
-            network: taraxaTestnet.name,
-            wallet_address: address,
-            hash: txnHash,
-            status: "FAILED",
+      createTransaction(
+        {
+          receiptId,
+          gas: "0",
+          blockNumber: "0",
+          network: taraxaTestnet.name,
+          wallet_address: address,
+          trxnHash: txnHash,
+          status: "FAILED",
+        },
+        {
+          onSuccess: () => {
+            Alert.alert(
+              "Transaction Failed",
+              "The transaction failed on the blockchain but we have saved the attempt to your history.",
+              [{ text: "OK", onPress: () => router.push("/") }]
+            );
           },
-          {
-            onSuccess: () => {
-              Alert.alert(
-                "Transaction Failed",
-                "The transaction failed on the blockchain but we have saved the attempt to your history.",
-                [{ text: "OK", onPress: () => router.push("/") }]
-              );
-            },
-            onError: (error) => {
-              Alert.alert(
-                "On-Chain & Save Failed",
-                `The transaction failed on-chain and we also failed to save it to our database. Please contact support. Error: ${error.message}`,
-                [{ text: "OK", onPress: () => router.push("/") }]
-              );
-            },
-          }
-        );
-      }
+          onError: (error) => {
+            Alert.alert(
+              "On-Chain & Save Failed",
+              `The transaction failed on-chain and we also failed to save it to our database. Please contact support. Error: ${error.message}`,
+              [{ text: "OK", onPress: () => router.push("/") }]
+            );
+          },
+        }
+      );
     }
   }, [isTxError]);
 
@@ -155,12 +151,48 @@ export default function Step5() {
 
   return (
     <View className="bg-background flex-1 px-6">
+      <View>
+        <Text className="text-white text-2xl font-bold">
+          Confirm Receipt Submission to Blockchain
+        </Text>
+        <View className="flex-row gap-4 mt-10 border-t border-white py-4">
+          <View className="flex-1">
+            <Text className="text-white text-lg font-semibold">Vendor</Text>
+            <Text className="text-white">{vendor}</Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-white text-lg font-semibold">Date</Text>
+            <Text className="text-gray-400">
+              {new Date(date).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </Text>
+          </View>
+        </View>
+        <View className="flex-row gap-4 mt-2 border-t border-white py-4">
+          <View className="flex-1">
+            <Text className="text-white text-lg font-semibold">Amount</Text>
+            <Text className="text-white">
+              {Number(amount).toLocaleString("en-US", {
+                style: "currency",
+                currency: "USD",
+              })}
+            </Text>
+          </View>
+          <View className="flex-1">
+            <Text className="text-white text-lg font-semibold">Category</Text>
+            <Text className="text-gray-400">{category}</Text>
+          </View>
+        </View>
+      </View>
       <View className="mt-auto mb-6">
         <Pressable
           onPress={handleSubmit}
           disabled={isProcessing}
           className={`rounded-full py-3 flex-row justify-center items-center ${
-            isProcessing ? "bg-primaryMuted" : "bg-primary2"
+            isProcessing ? "bg-white" : "bg-primary2"
           }`}
         >
           {isProcessing && (
