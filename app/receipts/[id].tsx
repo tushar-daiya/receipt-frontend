@@ -1,31 +1,75 @@
 import ImageDownloader from "@/components/ImageDownloader";
 import images from "@/constants/images";
 import { getReceipt } from "@/lib/api/receipts";
+import { useGetTransaction } from "@/lib/api/transaction";
 import { Receipt } from "@/lib/types";
 import { Feather } from "@expo/vector-icons";
+import * as Clipboard from "expo-clipboard";
+import * as Linking from "expo-linking";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
+  Alert,
   Image,
   Pressable,
   ScrollView,
-  StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAccount } from "wagmi";
 
 const Page = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+
   if (!id) {
     router.push("/");
     return null;
   }
+
+  // receipt fetch
   const { data, error, isPending, isError } = getReceipt({
     params: {},
     id: id as string,
   });
+
+  const { address: wallet_address } = useAccount();
+
+  // ✅ FIX: correctly use the custom hook
+  const {
+    data: transactionData,
+    isLoading: isTransactionLoading,
+    isError: isTransactionError,
+    error: transactionError,
+  } = useGetTransaction({
+    params: { wallet_address: wallet_address || "" },
+  });
+
+  const handleVerify = async () => {
+    if (!transactionData || transactionData.length === 0) {
+      Alert.alert("No Transactions", "No transactions found for this wallet.");
+      return;
+    }
+
+    const lastTransaction = transactionData[0];
+    const transactionHash = lastTransaction.trxnHash;
+
+    await Clipboard.setStringAsync(transactionHash);
+    Alert.alert(
+      "Transaction Copied",
+      "The transaction hash has been copied to your clipboard."
+    );
+
+    const explorerUrl = `https://explorer.testnet.taraxa.io/tx/${transactionHash}`;
+    Linking.openURL(explorerUrl).catch((error) => {
+      Alert.alert(
+        "Error",
+        "Failed to open Taraxa Explorer. Please check your internet connection."
+      );
+      console.error("Failed to open Taraxa Explorer:", error);
+    });
+  };
 
   const receipt: Receipt = data?.receipt;
 
@@ -43,8 +87,15 @@ const Page = () => {
         <Text className="text-xl font-semibold text-white">Receipt</Text>
         <View className="flex-1" />
       </View>
+
       {isPending && <Loading />}
       {isError && error && <Error err={error.message} />}
+
+      {isTransactionLoading && <Loading />}
+      {isTransactionError && transactionError && (
+        <Error err={transactionError.message} />
+      )}
+
       {data && (
         <View className="flex-1">
           <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
@@ -63,59 +114,28 @@ const Page = () => {
                 className="w-full aspect-video rounded-lg mt-4"
               />
               <View className="mt-6 flex-col gap-6">
-                <View className="flex-row items-center">
-                  <View className="bg-secondary rounded-lg p-4">
-                    <Image source={images.receipt_icon} className="w-8 h-8" />
-                  </View>
-                  <View className="ml-4">
-                    <Text className="text-white text-lg font-semibold">
-                      {receipt.vendor}
-                    </Text>
-                    <Text className="text-primaryMuted">Vendor</Text>
-                  </View>
-                </View>
-                <View className="flex-row items-center">
-                  <View className="bg-secondary rounded-lg p-4">
-                    <Image source={images.receipt_icon} className="w-8 h-8" />
-                  </View>
-                  <View className="ml-4">
-                    <Text className="text-white text-lg font-semibold">
-                      {new Date(receipt.date).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </Text>
-                    <Text className="text-primaryMuted">Receipt Date</Text>
-                  </View>
-                </View>
-                <View className="flex-row items-center">
-                  <View className="bg-secondary rounded-lg p-4">
-                    <Image source={images.receipt_icon} className="w-8 h-8" />
-                  </View>
-                  <View className="ml-4">
-                    <Text className="text-white text-lg font-semibold">
-                      {receipt.category}
-                    </Text>
-                    <Text className="text-primaryMuted">Category</Text>
-                  </View>
-                </View>
-                <View className="flex-row items-center">
-                  <View className="bg-secondary rounded-lg p-4">
-                    <Image source={images.receipt_icon} className="w-8 h-8" />
-                  </View>
-                  <View className="ml-4">
-                    <Text className="text-white text-lg font-semibold">
-                      Wallet Address
-                    </Text>
-                    <Text className="text-primaryMuted">Signing Wallet</Text>
-                  </View>
-                </View>
+                <InfoRow title={receipt.vendor} subtitle="Vendor" />
+                <InfoRow
+                  title={new Date(receipt.date).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                  subtitle="Receipt Date"
+                />
+                <InfoRow title={receipt.category} subtitle="Category" />
+                <InfoRow
+                  title={wallet_address || "-"}
+                  subtitle="Signing Wallet"
+                />
               </View>
             </View>
           </ScrollView>
           <View className="h-20 flex-row justify-between items-center mb-4">
-            <Pressable className="flex-1 bg-[#B0E8C9] rounded-xl py-4 mx-4">
+            <Pressable
+              className="flex-1 bg-[#B0E8C9] rounded-xl py-4 mx-4"
+              onPress={handleVerify}
+            >
               <Text className="text-black text-center">Verify</Text>
             </Pressable>
             <Pressable
@@ -135,6 +155,18 @@ const Page = () => {
   );
 };
 
+const InfoRow = ({ title, subtitle }: { title: string; subtitle: string }) => (
+  <View className="flex-row items-center">
+    <View className="bg-secondary rounded-lg p-4">
+      <Image source={images.receipt_icon} className="w-8 h-8" />
+    </View>
+    <View className="ml-4">
+      <Text className="text-white text-lg font-semibold">{title}</Text>
+      <Text className="text-primaryMuted">{subtitle}</Text>
+    </View>
+  </View>
+);
+
 function Loading() {
   return (
     <View className="flex-1 items-center justify-center">
@@ -152,5 +184,3 @@ function Error({ err }: { err: string }) {
 }
 
 export default Page;
-
-const styles = StyleSheet.create({});

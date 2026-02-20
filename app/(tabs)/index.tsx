@@ -1,7 +1,8 @@
-// import { Plus } from "lucide-react-native";
 import { listReceipts } from "@/lib/api/receipts";
+import { useGetTransaction } from "@/lib/api/transaction";
 import { Receipt } from "@/lib/types";
 import { Feather } from "@expo/vector-icons";
+
 import { Link, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -13,6 +14,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import { useAccount } from "wagmi";
 import images from "../../constants/images";
 
 const GeometricShape = ({
@@ -45,7 +47,9 @@ const StatCard = ({
     <Text className="text-sm text-white mb-2 font-medium">{title}</Text>
     <Text className="text-2xl font-bold text-white mb-1">{value}</Text>
     <Text
-      className={`text-sm font-semibold ${isNegative ? "text-erorr" : "text-highlight"}`}
+      className={`text-sm font-semibold ${
+        isNegative ? "text-erorr" : "text-highlight"
+      }`}
     >
       {isNegative ? "" : "+"}
       {percentage}
@@ -81,6 +85,11 @@ function ReceiptItem({ item }: { item: Receipt }) {
 
 export default function index() {
   const router = useRouter();
+  const { address: wallet_address } = useAccount();
+
+  const { data: transactionData } = useGetTransaction({
+    params: { wallet_address: wallet_address || "" },
+  });
 
   const { data, isError, isPending, error, isSuccess } = listReceipts({
     params: {},
@@ -126,10 +135,8 @@ export default function index() {
 
         {/* Verify Button */}
         <TouchableOpacity
-          onPress={() => {
-            router.push("/verify");
-          }}
           className="bg-primary2 px-8 py-3 rounded-3xl mb-5 z-10"
+          onPress={() => router.push("/verify")}
         >
           <Text className="text-lg font-semibold text-white">Verify</Text>
         </TouchableOpacity>

@@ -1,19 +1,26 @@
+//ignore-prettier
+import "@walletconnect/react-native-compat";
+import "react-native-get-random-values";
+
 import { authClient } from "@/lib/auth-client";
 import { authStore } from "@/lib/auth-store";
+import { useSigninStore } from "@/lib/sign-in-store";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, usePathname } from "expo-router";
-import { useEffect } from "react";
-import { ActivityIndicator, Pressable, Text, View } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import * as SplashScreen from "expo-splash-screen";
+import { useEffect } from "react";
+import { Pressable, Text, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import "./globals.css";
-import { useSigninStore } from "@/lib/sign-in-store";
 
 // Configure Reanimated to suppress strict mode warnings
+import { config } from "@/lib/wallet-config";
+import { Web3Modal } from "@web3modal/wagmi-react-native";
 import {
   configureReanimatedLogger,
   ReanimatedLogLevel,
 } from "react-native-reanimated";
+import { WagmiProvider } from "wagmi";
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
@@ -112,24 +119,27 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SafeAreaView className="flex-1 dark:bg-background bg-white">
-        <Stack screenOptions={{ headerShown: false }}>
-          <Stack.Protected guard={!!!session}>
-            <Stack.Protected guard={!!email}>
-              <Stack.Screen name="otpVerification" />
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <SafeAreaView className="flex-1 dark:bg-background bg-white">
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Protected guard={!!!session}>
+              <Stack.Protected guard={!!email}>
+                <Stack.Screen name="otpVerification" />
+              </Stack.Protected>
+              <Stack.Screen name="initial" />
+              <Stack.Screen name="signup" />
+              <Stack.Screen name="login" />
+              <Stack.Screen name="signin" />
             </Stack.Protected>
-            <Stack.Screen name="initial" />
-            <Stack.Screen name="signup" />
-            <Stack.Screen name="login" />
-            <Stack.Screen name="signin" />
-          </Stack.Protected>
-          <Stack.Protected guard={!!session}>
-            <Stack.Screen name="(tabs)" />
-            <Stack.Screen name="verify" />
-          </Stack.Protected>
-        </Stack>
-      </SafeAreaView>
-    </QueryClientProvider>
+            <Stack.Protected guard={!!session}>
+              <Stack.Screen name="(tabs)" />
+              <Stack.Screen name="verify" />
+            </Stack.Protected>
+          </Stack>
+        </SafeAreaView>
+        <Web3Modal></Web3Modal>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 }
